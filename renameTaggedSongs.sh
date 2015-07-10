@@ -26,26 +26,28 @@ mkdir ../renamed;
 
 for i in $(ls)
 	do
-		_infos=$( mdls $i | egrep "(ItemComposer|ItemDisplayName|ItemFSName|kMDItemKind)" | cut -d "=" -f 2 | cut -d "\"" -f 2);
-		_composer=$( echo "$_infos" | awk -v FS="\n" -v RS= -v OFS=@ '{print $1}');
-		_displayName=$( echo "$_infos" | awk -v FS="\n" -v RS= -v OFS=@ '{print $2}');
-		_fsName=$( echo "$_infos" | awk -v FS="\n" -v RS= -v OFS=@ '{print $3}');
-		_itemKind=$( echo "$_infos" | awk -v FS="\n" -v RS= -v OFS=@ '{print $4}');
+		_composer=$( mdls $i | grep ItemComposer | cut -d "=" -f 2 | cut -d "\"" -f 2 );
+		_displayName=$( mdls $i | grep ItemDisplayName | cut -d "=" -f 2 | cut -d "\"" -f 2 );
+		_fsName=$( mdls $i | grep ItemFSName | cut -d "=" -f 2 | cut -d "\"" -f 2 );
+		_itemKind=$( mdls $i | grep kMDItemKind | cut -d "=" -f 2 | cut -d "\"" -f 2 );
 		
-		echo $_displayName @@@ $_fsName @@@@ $_itemKind;
-
+		echo $_composer;
+		echo $_displayName;
+		echo $_fsName;
+		#echo $_itemKind;
+		echo "";
 		if [[ "$_itemKind" != *"Audio"* ]]
 			then
-			echo $_fsName "seems not to be an audio file. Skip? (y/n)";
+			echo -n $_fsName "seems not to be an audio file. Skip? (y/n) ";
 			read answer;
 			while [[ "$answer" != "y" && "$answer" != "n" ]]; do
-				echo $_fsName "seems not to be an audio file. Skip? (y/n)";
+				echo -n $_fsName "seems not to be an audio file. Skip? (y/n) ";
 				read answer;
 			done
 
 			if [[ "$answer" == 'n' ]]; then
 				echo "Exiting..";
-				exit 2;
+				exit 3;
 			else
 				SKIPPED=$SKIPPED+1;
 				continue;
@@ -55,14 +57,7 @@ for i in $(ls)
 
 		filename=$(basename "$_fsName")
 		extension="${filename##*.}"
-		echo $extension;
-		#mv $3 ../renamed/$1-$2.$extension;
-
-		#>> /tmp/songs
+		#echo $extension;
+		cp $_fsName ../renamed/$_displayName-$_composer.$extension;
 done
 IFS=$SAVEIFS;
-
-
-#for i in $(cat /tmp/songs.txt)
-#	do A=`echo $i | cut -d "@" -f 1`; B=`echo $i | cut -d "@" -f 2 `;C=`echo $i | cut -d "@" -f 3`; mv $A $B-$C 
-#done                               
