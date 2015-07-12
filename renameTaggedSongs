@@ -1,0 +1,19 @@
+.\" Manpage for renameTaggedSongs.sh
+.\" Contact tucciroberto2000@gmail.com to correct errors or typos.
+.TH man 8 "12 July 2015" "1.0" "renameTaggedSongs.sh man page"
+.SH NAME
+renameTaggedSongs.sh - Rename songs basing on song metadata 
+.SH SYNOPSIS
+renameTaggedSongs.sh [-v] [-s] [-h] [SONG_FOLDER]
+.SH DESCRIPTION
+Rename songs basing on song metadata
+.SH OPTIONS
+	-v	Verbose flag. It prints song informations before renaming it.
+.SH ""
+	-s 	Skip flag. It automatically skips non-audio songs.
+.SH ""
+	-h	Prints this guide
+.SH BUGS
+No known bugs.
+.SH AUTHOR
+Roberto Tucci (tucciroberto2000@gmail.com)

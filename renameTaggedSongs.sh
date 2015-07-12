@@ -1,4 +1,41 @@
 #!/bin/bash
+function getUsage {
+	echo -e "Usage:";
+	echo -e "\t./renameTaggedSongs.sh [ -h | -v | -s ] songsFolderPath\n"
+	echo -e "For more informations write \"man ./renameTaggedSongs\"\n"
+}
+
+__verbose=false;
+__skipAuto=false;
+
+args=`getopt vhs $*`;
+
+if [ $? != 0 ]
+then
+       getUsage;
+       exit 2;
+fi
+set -- $args
+
+for i
+do
+	case "$i"
+		in
+               -v)
+                       	__verbose=true;
+                       	shift;;
+               -s)
+                       	__skipAuto=true; 
+                       	shift;;
+               -h)
+						getUsage;
+						exit 2;;
+
+               --)
+                       	shift; break;;
+       esac
+done 
+
 
 DIR=$1;
 if ! [ -d "$DIR" ]
@@ -30,34 +67,44 @@ for i in $(ls)
 		_displayName=$( mdls $i | grep ItemDisplayName | cut -d "=" -f 2 | cut -d "\"" -f 2 );
 		_fsName=$( mdls $i | grep ItemFSName | cut -d "=" -f 2 | cut -d "\"" -f 2 );
 		_itemKind=$( mdls $i | grep kMDItemKind | cut -d "=" -f 2 | cut -d "\"" -f 2 );
-		
-		echo $_composer;
-		echo $_displayName;
-		echo $_fsName;
-		#echo $_itemKind;
-		echo "";
+
 		if [[ "$_itemKind" != *"Audio"* ]]
 			then
-			echo -n $_fsName "seems not to be an audio file. Skip? (y/n) ";
-			read answer;
-			while [[ "$answer" != "y" && "$answer" != "n" ]]; do
-				echo -n $_fsName "seems not to be an audio file. Skip? (y/n) ";
-				read answer;
-			done
-
-			if [[ "$answer" == 'n' ]]; then
-				echo "Exiting..";
-				exit 3;
-			else
+			if $__skipAuto 
+				then
 				SKIPPED=$SKIPPED+1;
 				continue;
+			else
+				echo -n $_fsName " seems not to be an audio file. Skip? (y/n) ";
+				read answer;
+				while [[ "$answer" != "y" && "$answer" != "n" ]]; do
+					echo -n $_fsName " seems not to be an audio file. Skip? (y/n) ";
+					read answer;
+				done
+
+				if [[ "$answer" == 'n' ]]; then
+					echo "Exiting..";
+					exit 3;
+				else
+					SKIPPED=$SKIPPED+1;
+					continue;
+				fi
 			fi
 		fi
 
+		if $__verbose 
+			then 
+			echo -e "Composer:\t $_composer"; 
+			echo -e "Title:\t\t $_displayName";
+			echo -e "filename:\t $_fsName";
+			echo "";
+		fi;
 
 		filename=$(basename "$_fsName")
 		extension="${filename##*.}"
 		#echo $extension;
+
+		echo $_fsName;
 		cp $_fsName ../renamed/$_displayName-$_composer.$extension;
 done
 IFS=$SAVEIFS;
