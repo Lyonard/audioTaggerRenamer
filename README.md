@@ -17,7 +17,7 @@ Expected usage: <br>
     <br><br>
 </li>
 <li><b>LATER</b><br>
-    ./renameTaggedSongs.sh myFolder/with/songs/ "NAME|||COMPOSER|||YEAR"<br>
-    ./tagSongsByName.sh myFolder/with/songs/ "YEAR|||NAME|||COMPOSER"<br>
+    ./renameTaggedSongs.sh myFolder/with/songs/ target/folder/ -f "NAME|||COMPOSER|||YEAR"<br>
+    ./tagSongsByName.sh myFolder/with/songs/ target/folder/ -f "YEAR|||NAME|||COMPOSER"<br>
 <br><br>
 </li></ul>
