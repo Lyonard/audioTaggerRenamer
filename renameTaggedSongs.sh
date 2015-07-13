@@ -8,34 +8,38 @@ function getUsage {
 __verbose=false;
 __skipAuto=false;
 
-args=`getopt vhs $*`;
-
-if [ $? != 0 ]
+if [ $# -eq 0 ]
 then
        getUsage;
        exit 2;
 fi
 set -- $args
 
-for i
-do
-	case "$i"
-		in
-               -v)
-                       	__verbose=true;
-                       	shift;;
-               -s)
-                       	__skipAuto=true; 
-                       	shift;;
-               -h)
-						getUsage;
-						exit 2;;
+while [ $# -ne 0 ]; do
+    case $1 in
+        -h|--help)
+            getUsage;
+            shift
+            ;;
+        -v|--verbose)
+            __verbose=true;
+            shift
+            ;;
+        -s|--skipauto)
+            __skipAuto=true;
+            shift
+            ;;
 
-               --)
-                       	shift; break;;
-       esac
-done 
+        --) #end of parameters, exit while loop
+            shift; break
+            ;;
 
+        \?|*) #unrecognized option - show help
+            getUsage
+            exit 2
+            ;;
+    esac
+done
 
 DIR=$1;
 if ! [ -d "$DIR" ]
